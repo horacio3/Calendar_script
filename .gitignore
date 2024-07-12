@@ -2,3 +2,4 @@
 .vcalendar
 credentials.json
 token.pickle
+calendar_logfile.log
