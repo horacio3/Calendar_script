@@ -1,4 +1,5 @@
 .DS_Store
-.vcalendar
+.env
 credentials.json
 token.pickle
+calendar_logfile.log
