@@ -1,3 +1,4 @@
 .DS_Store
+.vcalendar
 credentials.json
 token.pickle

@@ -37,7 +37,7 @@ def main():
 
     # Calculate the date for the next workday
     today = datetime.date.today()
-    # today = datetime.date(2023, 8, 17)
+    # today = datetime.date(2024, 7, 11)
     next_workday = today + datetime.timedelta(days=1)
     while next_workday.weekday() >= 5 or next_workday.strftime('%Y-%m-%d') in company_holidays:  # Skip weekends
         next_workday += datetime.timedelta(days=1)
@@ -73,7 +73,10 @@ def main():
     # Create open time slot events
     for slot in open_slots:
         event = {
-            'eventType':'focusTime', # focusTime is only available via UI not API https://developers.google.com/calendar/api/v3/reference/events
+            'eventType':'focusTime', # focusTime API https://developers.google.com/calendar/api/v3/reference/events
+	    'focusTimeProperties': {
+    		'autoDeclineMode': 'declineOnlyNewConflictingInvitations',
+	    },
             'summary': 'DO NOT BOOK. For INTERNAL use',
             'start': {
                 'dateTime': slot['start'],
