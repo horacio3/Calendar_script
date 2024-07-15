@@ -10,9 +10,10 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
 # List of company holidays (date format: YYYY-MM-DD)
-company_holidays = ['2023-09-04','2023-11-23','2023-11-24','2023-12-25','2023-12-26','2024-01-01','2024-01-15',
-                    '2024-03-27','2024-06-19','2024-07-04','2024-09-02','2024-11-28','2024-11-29','2024-12-24',
-                    '2024-12-25']
+company_holidays = ['2024-07-04','2024-09-02','2024-11-28','2024-11-29','2024-12-24',
+                    '2024-12-25','2025-01-01','2025-01-20','2025-05-26','2025-06-19',
+                    '2025-07-04','2025-09-01','2025-11-27','2025-11-28','2025-12-24',
+                    '2025-12-25','2025-12-31']
 
 def main():
     creds = None
@@ -37,7 +38,7 @@ def main():
 
     # Calculate the date for the next workday
     today = datetime.date.today()
-    # today = datetime.date(2024, 7, 11)
+    # today = datetime.date(2024, 7, 14)
     next_workday = today + datetime.timedelta(days=1)
     while next_workday.weekday() >= 5 or next_workday.strftime('%Y-%m-%d') in company_holidays:  # Skip weekends
         next_workday += datetime.timedelta(days=1)
