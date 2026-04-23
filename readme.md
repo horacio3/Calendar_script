@@ -1,94 +1,102 @@
-# Automated Next Day Block Google Calendar Event Creator
-This Python script automates the creation of calendar events based on available time slots for the next workday. It creates "focus time" events in your Google Calendar to block off open time slots, helping you manage your schedule more effectively.
+# Automated Calendar Block Creator
+
+This Python script automates the creation of focus time blocks in your Google Calendar. It finds open time slots for a given workday and fills them with "DO NOT BOOK" focus time events, helping protect your schedule from unwanted meetings.
 
 ## Features
-- Automatically identifies the next workday
-- Respects existing calendar events
-- Creates "focus time" events in open time slots
-- Configurable work hours and company holidays
+
+- Automatically identifies the next workday (skips weekends and company holidays)
+- Respects existing calendar events when calculating open slots
+- Skips declined meetings — their time is treated as available
+- Idempotent — running the script multiple times on the same day won't create duplicate blocks
+- Accepts an optional date argument to target a specific day
+- Configurable work hours, timezone, and company holidays
 
 ## Requirements
-- Python 3.7 or higher
+
+- Python 3.9 or higher
 - Google account with Calendar access
 
 ## Installation
-Clone this repository to your local machine:
+
+Clone this repository:
 
 ```bash
 git clone git@github.com:horacio3/Calendar_script.git
-cd automated-calendar-block
+cd Calendar_script
 ```
-Install the required dependencies using pip:
+
+Install dependencies using `uv`:
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 ## Setup credentials
-To use this script, you need to obtain a credentials.json file from Google:
 
-1. Go to the Google Cloud Console.
-1. Create a new project or select an existing project.
-1. In the left sidebar, click on "APIs & Services" > "Credentials."
-1. Click the "+ CREATE CREDENTIALS" button and select "OAuth client ID."
-1. Choose "Desktop app" as the application type.
-1. Give your OAuth 2.0 client ID a name (e.g., "Calendar Automation Script").
-1. Click the "Create" button.
-1. In the list of OAuth 2.0 Client IDs, find the one you just created and click on the download button to the right. This will download the credentials.json file.
-1. Place the credentials.json file in the same directory as your automation.py script.
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project or select an existing one.
+3. Go to **APIs & Services → Credentials**.
+4. Click **+ CREATE CREDENTIALS** and select **OAuth client ID**.
+5. Choose **Desktop app** as the application type and give it a name.
+6. Download the JSON file and place it in the same directory as `automation.py`.
+7. Update the `credentials_file_path` variable in `automation.py` to point to your downloaded file.
 
-## Enable API
+## Enable the API
 
-1. Visit the following link in your web browser: [Google Cloud Console - Calendar API Overview](https://console.developers.google.com/apis/api/calendar-json.googleapis.com/overview)
-1. If prompted, sign in with the Google Account associated with the project you're using.
-1. On the Overview page, you'll see information about the Google Calendar API. If it's not enabled, click on the "Enable" button to enable the API for your project.
-1. After enabling the API, wait a few minutes to ensure that the action propagates to Google's systems.
+1. Visit the [Google Calendar API overview](https://console.developers.google.com/apis/api/calendar-json.googleapis.com/overview).
+2. Sign in with the Google account associated with your project.
+3. Click **Enable** if the API is not already enabled.
 
 ## Configuration
 
-Open the automation.py file and modify the following variables as needed:
+Edit `automation.py` to adjust these values as needed:
 
-- WORK_START_TIME: Set your workday start time (default is "07:30:00")
-- WORK_END_TIME: Set your workday end time (default is "19:00:00")
-- TIME_ZONE: Set your time zone (default is "America/Chicago")
-- COMPANY_HOLIDAYS: Update the list with your company's holiday dates
+| Setting | Location | Default |
+|---|---|---|
+| Work start time | `start_time` in `main()` | 7:30 AM |
+| Work end time | `end_time` in `main()` | 7:00 PM |
+| Timezone | `CHICAGO_TZ` | America/Chicago |
+| Company holidays | `company_holidays` list | See file |
 
 ## Usage
-### Run the script manually using the following command:
+
+Block open slots for the next workday:
 
 ```bash
 python automation.py
 ```
 
-Edit your crontab file by running:
+Target a specific date:
 
-Copy code
-crontab -e
-Add the following line to run the script every weekday at 4:45 PM:
-
-```
-45 16 * * 1-5 /usr/local/bin/python3 /path/to/automated-calendar-event/automation.py >> ~/calendar_logfile.log 2>&1
+```bash
+python automation.py 2026-04-23
 ```
 
-Schedule on Windows using Task Scheduler
-Open Task Scheduler from the Start menu.
-Click on "Create Basic Task" and follow the prompts.
-Choose "Start a program" as the action and browse to select the Python executable (usually python.exe or python3.exe).
-In the "Add arguments" field, enter the path to your script: C:\path\to\automated-calendar-event\automation.py.
-Set the trigger to run the task daily at 5:00 PM.
+### Automate with cron (macOS/Linux)
 
+Run `crontab -e` and add a line to run the script every weekday at 4:45 PM:
+
+```
+45 16 * * 1-5 /usr/local/bin/python3 /path/to/Calendar_script/automation.py >> ~/calendar_logfile.log 2>&1
+```
+
+### Automate with Task Scheduler (Windows)
+
+1. Open Task Scheduler and click **Create Basic Task**.
+2. Set the action to **Start a program** and select your Python executable.
+3. In **Add arguments**, enter the path to `automation.py`.
+4. Set the trigger to run daily at your preferred time on weekdays.
 
 ## Troubleshooting
 
-- If you encounter authentication errors, delete the token.pickle file and run the script again to re-authenticate.
-- Ensure that your credentials.json file is in the same directory as the script.
-- Check that the Google Calendar API is enabled for your project in the Google Cloud Console.
+- **Authentication errors** — delete `token.pickle` and re-run to re-authenticate.
+- **Wrong credentials file** — ensure `credentials_file_path` in `automation.py` points to your `client_secret_*.json` file.
+- **API not enabled** — confirm the Google Calendar API is enabled in Google Cloud Console.
 
 ## Security and Privacy
 
-This script requires access to your Google Calendar. It only creates events and does not read or modify existing events. Always review the permissions you grant to scripts and applications. The credentials.json file and token.pickle file contain sensitive information - keep them secure and do not share them.
+This script reads your Google Calendar to find open slots and creates new focus time events. It does not modify or delete existing events. The `client_secret_*.json` and `token.pickle` files contain sensitive credentials — keep them secure and do not commit them to version control (both are covered by `.gitignore`).
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
 
-Remember to replace placeholders like yourusername, /path/to/automated-calendar-event, and others with the actual values for your setup.
+This project is licensed under the MIT License. See the LICENSE file for details.
