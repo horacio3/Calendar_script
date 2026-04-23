@@ -32,7 +32,8 @@ def main():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first time.
-    token_path = '/Users/horacio/forks/Calendar_script/token.pickle'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    token_path = os.path.join(base_dir, 'token.pickle')
     if os.path.exists(token_path):
         with open(token_path, 'rb') as token:
             creds = pickle.load(token)
@@ -41,7 +42,7 @@ def main():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            credentials_file_path = '/Users/horacio/forks/Calendar_script/client_secret_295637899002-e3dejutnrc3cj6o1b7j22mmcfg5h5lbn.apps.googleusercontent.com.json'
+            credentials_file_path = os.path.join(base_dir, 'client_secret.json')
             flow = InstalledAppFlow.from_client_secrets_file(credentials_file_path, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run

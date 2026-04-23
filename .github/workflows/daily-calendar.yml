@@ -1,0 +1,28 @@
+name: Daily Calendar Blocks
+
+on:
+  schedule:
+    # 4PM CDT (UTC-5) = 21:00 UTC — update to 22:00 UTC Nov-Mar for CST
+    - cron: '0 21 * * 1-5'
+  workflow_dispatch:  # allow manual runs from GitHub UI
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CLIENT_SECRET }}' > client_secret.json
+          echo '${{ secrets.GOOGLE_TOKEN }}' | base64 -d > token.pickle
+
+      - name: Run script
+        run: python automation.py
