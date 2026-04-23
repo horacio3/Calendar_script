@@ -1,6 +1,7 @@
 .DS_Store
 .env
 credentials.json
+client_secret_*.json
 token.pickle
 calendar_logfile.log
 token.json
